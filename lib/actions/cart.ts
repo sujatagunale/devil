@@ -23,6 +23,7 @@ async function getSessionId() {
 }
 
 export async function addToCart(productId: number, quantity: number = 1) {
+  if (!db) return [];
   const sessionId = await getSessionId();
   
   const existingItem = await db.select()
@@ -43,6 +44,7 @@ export async function addToCart(productId: number, quantity: number = 1) {
 }
 
 export async function updateCartItem(itemId: number, quantity: number) {
+  if (!db) return [];
   return await db.update(cartItems)
     .set({ quantity })
     .where(eq(cartItems.id, itemId))
@@ -50,12 +52,14 @@ export async function updateCartItem(itemId: number, quantity: number) {
 }
 
 export async function removeFromCart(itemId: number) {
+  if (!db) return [];
   return await db.delete(cartItems)
     .where(eq(cartItems.id, itemId))
     .returning();
 }
 
 export async function getCartItems() {
+  if (!db) return [];
   const sessionId = await getSessionId();
   
   return await db.select()

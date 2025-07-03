@@ -4,6 +4,11 @@ import { categories, products } from '../db/schema';
 async function seed() {
   console.log('Seeding database...');
 
+  if (!db) {
+    console.log('Database connection not available. Please set a valid DATABASE_URL.');
+    process.exit(1);
+  }
+
   const categoryData = [
     { name: 'T-Shirts', slug: 't-shirts' },
     { name: 'Hoodies', slug: 'hoodies' },
