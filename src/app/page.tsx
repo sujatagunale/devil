@@ -1,6 +1,11 @@
-import Image from "next/image";
+import { getFeaturedProducts, getAllCategories } from '@/lib/actions/products';
+import { getCartCount } from '@/lib/actions/cart';
+import Link from 'next/link';
 
-export default function Home() {
+export default async function Home() {
+  const featuredProducts = await getFeaturedProducts(8);
+  const categories = await getAllCategories();
+  const cartCount = await getCartCount();
   return (
     <div className="min-h-screen bg-white text-black font-[family-name:var(--font-sans)]">
       {/* Header */}
@@ -9,15 +14,15 @@ export default function Home() {
           <div className="flex items-center justify-between h-16">
             {/* Left Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Home</a>
-              <a href="/products" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Shop</a>
-              <a href="#" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Categories</a>
-              <a href="#" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Pages</a>
+              <Link href="/" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Home</Link>
+              <Link href="/products" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Shop</Link>
+              <Link href="#" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Categories</Link>
+              <Link href="#" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Pages</Link>
             </nav>
 
             {/* Center Logo */}
             <div className="flex-1 flex justify-center md:flex-none">
-              <a href="/" className="text-xl font-bold tracking-wider">DEVSWAG</a>
+              <Link href="/" className="text-xl font-bold tracking-wider">DEVSWAG</Link>
             </div>
 
             {/* Right Icons */}
@@ -41,7 +46,7 @@ export default function Home() {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.293 2.293A1 1 0 005 16h12M7 13v4a2 2 0 002 2h6a2 2 0 002-2v-4m-8 0V9a2 2 0 012-2h4a2 2 0 012 2v4.01" />
                 </svg>
-                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">{cartCount}</span>
               </button>
             </div>
           </div>
@@ -108,11 +113,11 @@ export default function Home() {
             {/* Tabs */}
             <div className="flex flex-wrap gap-6">
               <button className="text-sm font-medium text-black border-b-2 border-black pb-2">ALL</button>
-              <button className="text-sm font-medium text-gray-500 hover:text-black transition-colors pb-2">T-SHIRTS</button>
-              <button className="text-sm font-medium text-gray-500 hover:text-black transition-colors pb-2">HOODIES</button>
-              <button className="text-sm font-medium text-gray-500 hover:text-black transition-colors pb-2">STICKERS</button>
-              <button className="text-sm font-medium text-gray-500 hover:text-black transition-colors pb-2">MUGS</button>
-              <button className="text-sm font-medium text-gray-500 hover:text-black transition-colors pb-2">ACCESSORIES</button>
+              {categories.map((category) => (
+                <button key={category.id} className="text-sm font-medium text-gray-500 hover:text-black transition-colors pb-2">
+                  {category.name.toUpperCase()}
+                </button>
+              ))}
             </div>
 
             {/* Filter */}
@@ -130,132 +135,40 @@ export default function Home() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Product 1 */}
-            <div className="group">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                <div className="absolute top-3 left-3 bg-white px-2 py-1 text-xs font-medium rounded">NEW</div>
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-24 h-24 bg-gray-300 rounded flex items-center justify-center">
-                    <svg className="w-12 h-12 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M7.5,10.5C7.5,10.5 9,13 7.5,15.5C6,13 7.5,10.5 7.5,10.5M16.5,10.5C16.5,10.5 18,13 16.5,15.5C15,13 16.5,10.5 16.5,10.5Z"/>
-                    </svg>
+            {featuredProducts.map((item) => {
+              const product = item.products;
+              
+              return (
+                <div key={product.id} className="group">
+                  <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
+                    {product.isNew && (
+                      <div className="absolute top-3 left-3 bg-white px-2 py-1 text-xs font-medium rounded">NEW</div>
+                    )}
+                    {product.isOnSale && (
+                      <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 text-xs font-medium rounded">
+                        -{Math.round(((parseFloat(product.price) - parseFloat(product.salePrice || '0')) / parseFloat(product.price)) * 100)}%
+                      </div>
+                    )}
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-24 h-24 bg-gray-300 rounded flex items-center justify-center">
+                        <svg className="w-12 h-12 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"/>
+                        </svg>
+                      </div>
+                    </div>
                   </div>
+                  <h3 className="text-sm font-medium text-center mb-2">{product.name.toUpperCase()}</h3>
+                  {product.isOnSale ? (
+                    <div className="text-center">
+                      <span className="text-sm text-gray-400 line-through mr-2">${product.price}</span>
+                      <span className="text-sm text-gray-900 font-medium">${product.salePrice}</span>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-center text-gray-900 font-medium">${product.price}</p>
+                  )}
                 </div>
-              </div>
-              <h3 className="text-sm font-medium text-center mb-2">FRONTEND DEV TEE</h3>
-              <p className="text-sm text-center text-gray-900 font-medium">$29</p>
-            </div>
-
-            {/* Product 2 */}
-            <div className="group">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 text-xs font-medium rounded">-15%</div>
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center">
-                    <svg className="w-12 h-12 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M2,21V19H20V21H2M20,8V5L18,5V3A2,2 0 0,0 16,1H8A2,2 0 0,0 6,3V5H4V8A4,4 0 0,0 8,12H16A4,4 0 0,0 20,8M16,5H8V3H16V5Z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-sm font-medium text-center mb-2">CODE & COFFEE MUG</h3>
-              <div className="text-center">
-                <span className="text-sm text-gray-400 line-through mr-2">$25</span>
-                <span className="text-sm text-gray-900 font-medium">$21</span>
-              </div>
-            </div>
-
-            {/* Product 3 */}
-            <div className="group">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-24 h-16 bg-gray-300 rounded flex items-center justify-center">
-                    <svg className="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-sm font-medium text-center mb-2">REACT STICKER PACK</h3>
-              <p className="text-sm text-center text-gray-900 font-medium">$8</p>
-            </div>
-
-            {/* Product 4 */}
-            <div className="group">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                <div className="absolute top-3 left-3 bg-white px-2 py-1 text-xs font-medium rounded">NEW</div>
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-24 h-24 bg-black rounded-full flex items-center justify-center">
-                    <div className="w-2 h-8 bg-white rounded-full"></div>
-                    <div className="w-2 h-12 bg-white rounded-full mx-1"></div>
-                    <div className="w-2 h-6 bg-white rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-sm font-medium text-center mb-2">DEVELOPER HOODIE</h3>
-              <p className="text-sm text-center text-gray-900 font-medium">$65</p>
-            </div>
-
-            {/* Product 5 */}
-            <div className="group">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-24 h-20 bg-gray-300 rounded flex items-center justify-center">
-                    <svg className="w-12 h-12 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,6V12L16.2,14.2L17,12.9L12.5,11.2V6H11Z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-sm font-medium text-center mb-2">LAPTOP STAND</h3>
-              <p className="text-sm text-center text-gray-900 font-medium">$45</p>
-            </div>
-
-            {/* Product 6 */}
-            <div className="group">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 text-xs font-medium rounded">-20%</div>
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-24 h-24 bg-gray-300 rounded-lg flex items-center justify-center">
-                    <svg className="w-12 h-12 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M4,6H20V16H4M20,18A2,2 0 0,0 22,16V6C22,4.89 21.1,4 20,4H4C2.89,4 2,4.89 2,6V16A2,2 0 0,0 4,18H0V20H24V18H20Z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-sm font-medium text-center mb-2">MECHANICAL KEYBOARD</h3>
-              <div className="text-center">
-                <span className="text-sm text-gray-400 line-through mr-2">$120</span>
-                <span className="text-sm text-gray-900 font-medium">$96</span>
-              </div>
-            </div>
-
-            {/* Product 7 */}
-            <div className="group">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-16 h-24 bg-red-500 rounded flex items-center justify-center">
-                    <div className="w-8 h-1 bg-white rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-sm font-medium text-center mb-2">GIT COMMIT POSTER</h3>
-              <p className="text-sm text-center text-gray-900 font-medium">$18</p>
-            </div>
-
-            {/* Product 8 */}
-            <div className="group">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                <div className="absolute top-3 left-3 bg-white px-2 py-1 text-xs font-medium rounded">NEW</div>
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-6 h-24 bg-gray-300 rounded-full flex items-end justify-center pb-4">
-                    <div className="w-8 h-8 bg-gray-400 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-sm font-medium text-center mb-2">DESK LAMP</h3>
-              <p className="text-sm text-center text-gray-900 font-medium">$85</p>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
