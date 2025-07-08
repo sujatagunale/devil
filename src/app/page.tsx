@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -9,15 +9,15 @@ export default function Home() {
           <div className="flex items-center justify-between h-16">
             {/* Left Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Home</a>
-              <a href="/products" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Shop</a>
+              <Link href="/" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Home</Link>
+              <Link href="/products" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Shop</Link>
               <a href="#" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Categories</a>
               <a href="#" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Pages</a>
             </nav>
 
             {/* Center Logo */}
             <div className="flex-1 flex justify-center md:flex-none">
-              <a href="/" className="text-xl font-bold tracking-wider">DEVSWAG</a>
+              <Link href="/" className="text-xl font-bold tracking-wider">DEVSWAG</Link>
             </div>
 
             {/* Right Icons */}

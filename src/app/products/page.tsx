@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "next/image";
+import Link from "next/link";
 
 export default function ProductsPage() {
   return (
@@ -10,15 +10,15 @@ export default function ProductsPage() {
           <div className="flex items-center justify-between h-16">
             {/* Left Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Home</a>
-              <a href="/products" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Shop</a>
+              <Link href="/" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Home</Link>
+              <Link href="/products" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Shop</Link>
               <a href="#" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Categories</a>
               <a href="#" className="text-sm font-medium text-black hover:text-green-500 transition-colors">Pages</a>
             </nav>
 
             {/* Center Logo */}
             <div className="flex-1 flex justify-center md:flex-none">
-              <a href="/" className="text-xl font-bold tracking-wider">DEVSWAG</a>
+              <Link href="/" className="text-xl font-bold tracking-wider">DEVSWAG</Link>
             </div>
 
             {/* Right Icons */}
@@ -53,7 +53,7 @@ export default function ProductsPage() {
       <section className="py-6 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-2 text-sm">
-            <a href="/" className="text-gray-500 hover:text-black transition-colors">Home</a>
+            <Link href="/" className="text-gray-500 hover:text-black transition-colors">Home</Link>
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
